@@ -1,5 +1,6 @@
 <?php
 
+use App\Services\ApiResponse;
 use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
@@ -13,5 +14,5 @@ Route::prefix('v2')->group(function () {
 
 // Fallback route for unmatched API requests
 Route::fallback(function () {
-    return response()->json(['message' => 'Not Found.'], 404);
+    return ApiResponse::error('Endpoint not found', 404);
 });
