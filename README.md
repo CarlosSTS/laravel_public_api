@@ -307,3 +307,185 @@ A diferença está apenas em **onde o carregamento das versões é organizado**:
 
 * `routes/api.php` → organização centralizada nas rotas
 * `bootstrap/app.php` → organização centralizada na inicialização da aplicação
+
+
+
+---
+
+## 🧱 Middlewares
+
+Middlewares permitem interceptar requisições HTTP antes que elas cheguem ao controller e também modificar a resposta antes de retorná-la ao cliente.
+
+São úteis para aplicar comportamentos comuns em toda a aplicação.
+
+Fluxo:
+
+```text
+Requisição
+↓
+Middleware
+↓
+Controller
+↓
+Resposta
+```
+
+---
+
+## 🛠️ Criando um Middleware
+
+Para criar um middleware execute:
+
+```bash
+php artisan make:middleware MIDDLEWARE_NAME
+```
+
+Exemplo:
+
+```bash
+php artisan make:middleware CorrelationIdMiddleware
+```
+
+O arquivo será criado em:
+
+```text
+app/Http/Middleware/
+```
+
+Estrutura gerada:
+
+```php
+public function handle(
+    Request $request,
+    Closure $next
+): Response
+{
+    return $next($request);
+}
+```
+
+O método `handle()` recebe a requisição, executa regras intermediárias e define se o fluxo continuará.
+
+---
+
+## 🧾 Exemplo — Correlation ID
+
+Neste projeto foi utilizado um middleware responsável por controlar o identificador da requisição.
+
+Funcionamento:
+
+1. Verifica se o header `X-Correlation-ID` existe
+2. Caso não exista, gera um identificador único
+3. Adiciona o identificador na requisição
+4. Retorna o mesmo identificador na resposta
+
+Exemplo:
+
+```php
+class CorrelationIdMiddleware
+{
+    public function handle(
+        Request $request,
+        Closure $next
+    ): Response {
+
+        $correlationId =
+            $request->header(
+                'X-Correlation-ID'
+            )
+            ?: Str::uuid()->toString();
+
+        $request
+            ->headers
+            ->set(
+                'X-Correlation-ID',
+                $correlationId
+            );
+
+        $response = $next($request);
+
+        $response
+            ->headers
+            ->set(
+                'X-Correlation-ID',
+                $correlationId
+            );
+
+        return $response;
+    }
+}
+```
+
+Resultado esperado:
+
+```text
+Request:
+X-Correlation-ID: 123
+
+↓
+
+Response:
+X-Correlation-ID: 123
+```
+
+Caso o header não seja enviado:
+
+```text
+Request:
+(sem X-Correlation-ID)
+
+↓
+
+Response:
+X-Correlation-ID: generated-uuid
+```
+
+---
+
+## 🔗 Registrando o Middleware
+
+No Laravel moderno o middleware pode ser registrado no arquivo:
+
+```text
+bootstrap/app.php
+```
+
+Exemplo:
+
+```php
+->withMiddleware(
+    function (
+        Middleware $middleware
+    ): void {
+
+        $middleware->api(
+            prepend: [
+                CorrelationIdMiddleware::class
+            ]
+        );
+
+    }
+)
+```
+
+Neste caso o middleware será executado para todas as rotas da API.
+
+---
+
+## ▶️ Testando
+
+Exemplo de requisição:
+
+```http
+GET /api/status
+X-Correlation-ID: abc-123
+```
+
+Exemplo de resposta:
+
+```http
+HTTP/1.1 200 OK
+X-Correlation-ID: abc-123
+```
+
+Dessa forma cada requisição pode ser identificada e rastreada durante todo o fluxo da aplicação.
