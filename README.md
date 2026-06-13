@@ -526,4 +526,12 @@ O arquivo será disponibilizado em:
 config/cors.php
 ```
 
+Para mudanças nos arquivos de config/cors execute:
+
+```bash
+php artisan config:clear
+```
+
+Isso irá limpar qualquer cache de exista na aplicação
+
 ---
