@@ -1,0 +1,59 @@
+services:
+
+  app:
+    # Container da aplicação Laravel
+
+    build: .
+    # Constrói a imagem usando o Dockerfile da raiz
+
+    ports:
+      - "8000:8000"
+      # Porta da máquina → porta do container
+
+    volumes:
+      - .:/var/www
+      # Compartilha os arquivos do projeto com o container
+
+    depends_on:
+      - postgres
+      # Inicia o container postgres antes do app
+      # (não garante que o banco já esteja pronto)
+
+ 
+  postgres:
+
+    image: postgres:17
+    # Usa imagem oficial PostgreSQL versão 17
+
+    container_name: laravel_public_api
+    # Nome fixo do container
+
+    restart: unless-stopped
+    # Reinicia automaticamente
+    # Exceto quando você parar manualmente
+
+    environment:
+
+      POSTGRES_DB: ${DB_DATABASE}
+      # Nome do banco vindo do .env
+
+      POSTGRES_USER: ${DB_USERNAME}
+      # Usuário vindo do .env
+
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      # Senha vinda do .env
+
+    ports:
+      - "${DB_PORT}:5432"
+      # Porta do computador → porta interna do PostgreSQL
+
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      # Salva os dados fora do container
+      # Evita perder tabelas ao remover o container
+
+
+volumes:
+
+  postgres_data:
+  # Volume persistente do PostgreSQL
