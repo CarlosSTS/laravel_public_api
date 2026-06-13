@@ -125,5 +125,6 @@ return [
 
     // CUSTOM CONFIGURATION
     'maintenance_mode' => env('API_MAINTENANCE_MODE', false),
+    'rate_limit' => env('API_RATE_LIMIT', 0),
 
 ];

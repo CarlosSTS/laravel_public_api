@@ -23,7 +23,12 @@ class AppServiceProvider extends ServiceProvider
     {
         // rate limiters are now defined in the application's configuration
         RateLimiter::for('api', function ($request) {
-            return Limit::perMinute(60)->by($request->ip());
+            $RATE_LIMIT = config('app.rate_limit', 0); // default to 60 requests per minute if not set
+            if ($RATE_LIMIT > 0) {
+                return Limit::perMinute($RATE_LIMIT)->by($request->ip());
+            } else {
+                return Limit::none();
+            }
         });
     }
 }

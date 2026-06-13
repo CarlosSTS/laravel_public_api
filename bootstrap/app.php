@@ -2,9 +2,11 @@
 
 use App\Http\Middleware\CorrelationIdMiddleware;
 use App\Http\Middleware\MaintenanceModeMiddleware;
+use App\Services\ApiResponse;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\Route;
@@ -40,11 +42,18 @@ return Application::configure(basePath: dirname(__DIR__))
 
         // Rate limiting for API routes
         $middleware->api(append: [
-            ThrottleRequests::class.':api' , // use the 'api' rate limiter defined in the application's configuration  
+            ThrottleRequests::class . ':api', // use the 'api' rate limiter defined in the application's configuration
         ]);
+
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
             fn(Request $request) => $request->is('api/*'),
         );
+
+        // Custom exception for rate limit exceeded
+        $exceptions->render(function (ThrottleRequestsException $e, Request $request) {
+            return ApiResponse::error('Too many requests. Please try again later.', 429);
+
+        });
     })->create();
