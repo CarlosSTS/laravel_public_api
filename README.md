@@ -305,10 +305,8 @@ As duas abordagens produzem o mesmo resultado:
 
 A diferença está apenas em **onde o carregamento das versões é organizado**:
 
-* `routes/api.php` → organização centralizada nas rotas
-* `bootstrap/app.php` → organização centralizada na inicialização da aplicação
-
-
+- `routes/api.php` → organização centralizada nas rotas
+- `bootstrap/app.php` → organização centralizada na inicialização da aplicação
 
 ---
 
@@ -489,3 +487,43 @@ X-Correlation-ID: abc-123
 ```
 
 Dessa forma cada requisição pode ser identificada e rastreada durante todo o fluxo da aplicação.
+
+---
+
+## 🌐 CORS (Cross-Origin Resource Sharing)
+
+CORS controla quais origens externas podem acessar a API a partir do navegador.
+
+Esse mecanismo existe para permitir (ou bloquear) requisições entre domínios diferentes.
+
+Exemplo:
+
+```text
+Frontend:
+http://localhost:3000
+
+↓
+
+API:
+http://localhost:8000
+```
+
+Sem configuração adequada de CORS, o navegador pode bloquear a comunicação entre aplicações.
+
+---
+
+## ⚙️ Publicando a Configuração
+
+Para gerar o arquivo de configuração execute:
+
+```bash
+php artisan config:publish cors
+```
+
+O arquivo será disponibilizado em:
+
+```text
+config/cors.php
+```
+
+---
