@@ -123,4 +123,7 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    // CUSTOM CONFIGURATION
+    'maintenance_mode' => env('API_MAINTENANCE_MODE', false),
+
 ];
