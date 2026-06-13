@@ -163,3 +163,147 @@ Também é possível recriar o banco e executar as seeds automaticamente:
 ```bash
 php artisan migrate:fresh --seed
 ```
+
+---
+
+## 🔖 Versionamento da API
+
+O versionamento permite evoluir a API sem quebrar integrações existentes.
+
+Exemplo:
+
+```text
+/api/v1/products
+/api/v2/products
+```
+
+Neste projeto são apresentadas duas formas de organizar versões da API.
+
+---
+
+### Forma 1 — Versionamento via `routes/api.php`
+
+Nesta abordagem o arquivo principal de rotas redireciona as requisições para arquivos específicos de cada versão.
+
+Estrutura:
+
+```text
+routes/
+├── api.php
+├── api_v1.php
+└── api_v2.php
+```
+
+Arquivo principal:
+
+```php
+// routes/api.php
+
+use Illuminate\Support\Facades\Route;
+
+Route::prefix('v1')->group(function () {
+    require base_path('routes/api_v1.php');
+});
+
+Route::prefix('v2')->group(function () {
+    require base_path('routes/api_v2.php');
+});
+```
+
+Controllers organizados por versão:
+
+```bash
+php artisan make:controller Api/V1/MainController
+
+php artisan make:controller Api/V2/MainController
+```
+
+Estrutura gerada:
+
+```text
+app/
+└── Http/
+    └── Controllers/
+        └── Api/
+            ├── V1/
+            │   └── MainController.php
+            └── V2/
+                └── MainController.php
+```
+
+URLs finais:
+
+```text
+GET /api/v1/status
+GET /api/v2/status
+```
+
+---
+
+### Forma 2 — Versionamento via `bootstrap/app.php`
+
+Outra abordagem consiste em registrar as versões diretamente durante a inicialização da aplicação.
+
+Estrutura:
+
+```text
+routes/
+├── api_v1.php
+└── api_v2.php
+```
+
+Arquivo:
+
+```php
+// bootstrap/app.php
+
+use Illuminate\Support\Facades\Route;
+
+return Application::configure(
+    basePath: dirname(__DIR__)
+)
+->withRouting(
+    api: __DIR__.'/../routes/api.php',
+    commands: __DIR__.'/../routes/console.php',
+    health: '/up',
+
+    then: function (): void {
+
+        Route::middleware('api')
+            ->prefix('api/v1')
+            ->group(
+                base_path('routes/api_v1.php')
+            );
+
+        Route::middleware('api')
+            ->prefix('api/v2')
+            ->group(
+                base_path('routes/api_v2.php')
+            );
+    }
+)
+->create();
+```
+
+URLs finais:
+
+```text
+GET /api/v1/products
+GET /api/v2/products
+```
+
+---
+
+## ✅ Resumo
+
+As duas abordagens produzem o mesmo resultado:
+
+```text
+/api/v1/*
+/api/v2/*
+```
+
+A diferença está apenas em **onde o carregamento das versões é organizado**:
+
+* `routes/api.php` → organização centralizada nas rotas
+* `bootstrap/app.php` → organização centralizada na inicialização da aplicação

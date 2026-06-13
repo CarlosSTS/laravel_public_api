@@ -2,8 +2,6 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/status', function () {
-    return response()->json([
-        'status' => 'API is up and running',
-    ]);
+Route::prefix('v1')->group(function () {
+    require base_path('routes/api_v1.php');
 });
