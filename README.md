@@ -1,6 +1,6 @@
 ## 🗄️ Criando Migrations
 
-As migrations são utilizadas para versionar e controlar alterações na estrutura do banco de dados, permitindo que o esquema seja reproduzido e compartilhado entre ambientes.
+As migrations são utilizadas para versionar e controlar alterações na estrutura do banco de dados. Elas permitem que o esquema seja reproduzido e compartilhado entre diferentes ambientes.
 
 Para criar uma nova migration, execute:
 
@@ -22,7 +22,7 @@ O arquivo será criado em:
 database/migrations/
 ```
 
-Dentro da migration serão definidas as colunas, índices e relacionamentos da tabela.
+Dentro da migration são definidas as tabelas, colunas, índices e relacionamentos.
 
 ---
 
@@ -36,23 +36,23 @@ php artisan migrate
 
 Esse comando aplica todas as migrations pendentes ao banco de dados.
 
-O histórico das migrations executadas é armazenado na tabela:
+O histórico das migrations executadas é armazenado automaticamente na tabela:
 
 ```text
 migrations
 ```
 
-Dessa forma, o Laravel consegue identificar quais alterações já foram aplicadas.
+Assim o Laravel consegue identificar quais alterações já foram aplicadas.
 
 ---
 
 ## 🧩 Criando Models
 
-Os Models representam as entidades da aplicação e são responsáveis pela comunicação com o banco de dados utilizando o Eloquent ORM.
+Os Models representam as entidades da aplicação e realizam a comunicação com o banco de dados através do Eloquent ORM.
 
-Cada model normalmente está associado a uma tabela.
+Cada model normalmente representa uma tabela.
 
-Para criar um model, execute:
+Para criar um model:
 
 ```bash
 php artisan make:model MODEL_NAME
@@ -72,9 +72,9 @@ O arquivo será criado em:
 app/Models/
 ```
 
-Por convenção:
+### Convenções do Laravel
 
-- O nome do model é escrito no **singular**
+- O model utiliza nome no **singular**
 - Utiliza **PascalCase**
 - O Laravel associa automaticamente o model à tabela no **plural**
 
@@ -85,9 +85,81 @@ Model: Product
 Tabela: products
 ```
 
-Outro exemplo:
-
 ```text
 Model: Category
 Tabela: categories
+```
+
+---
+
+## 🌱 Seeders
+
+Seeders são utilizados para popular o banco de dados com dados iniciais ou dados para testes.
+
+Exemplos comuns:
+
+- Categorias padrão
+- Usuário administrador
+- Produtos iniciais
+- Dados de desenvolvimento
+
+### Criando um Seeder
+
+Execute:
+
+```bash
+php artisan make:seeder SEEDER_NAME
+```
+
+Exemplo:
+
+```bash
+php artisan make:seeder CategoriesTableSeeder
+```
+
+O arquivo será criado em:
+
+```text
+database/seeders/
+```
+
+Dentro do método `run()` defina os registros que serão inseridos.
+
+Exemplo:
+
+```php
+public function run()
+{
+    Category::create([
+        'name' => 'Eletrônicos'
+    ]);
+}
+```
+
+---
+
+## ▶️ Executando Seeders
+
+Para executar um seeder específico:
+
+```bash
+php artisan db:seed --class=CategoriesTableSeeder
+```
+
+Para executar todos os seeders registrados em:
+
+```text
+DatabaseSeeder.php
+```
+
+Execute:
+
+```bash
+php artisan db:seed
+```
+
+Também é possível recriar o banco e executar as seeds automaticamente:
+
+```bash
+php artisan migrate:fresh --seed
 ```
