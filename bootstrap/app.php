@@ -6,6 +6,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Support\Facades\Route;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -20,7 +21,7 @@ return Application::configure(basePath: dirname(__DIR__))
             // Route::middleware('api')
             // ->prefix('api/v1')
             // ->group(base_path('routes/api_v1.php'));
-        
+
             //  routes for version 2 of the API
             // Route::middleware('api')
             //     ->prefix('api/v2')
@@ -35,6 +36,11 @@ return Application::configure(basePath: dirname(__DIR__))
         // Ckeck if the application is in maintenance mode and apply the MaintenanceModeMiddleware to API routes
         $middleware->api(prepend: [
             MaintenanceModeMiddleware::class
+        ]);
+
+        // Rate limiting for API routes
+        $middleware->api(append: [
+            ThrottleRequests::class.':api' , // use the 'api' rate limiter defined in the application's configuration  
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
