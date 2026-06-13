@@ -12,4 +12,13 @@ class ApiResponse
             'data' => $data
         ], $code);
     }
+
+    public static function error($message = 'An error occurred', $code = 400, $errors = [])
+    {
+        return response()->json([
+            'status' => 'error',
+            'message' => $message,
+            'errors' => $errors
+        ], $code);
+    }
 }
