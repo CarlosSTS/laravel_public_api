@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CategoryResource;
+use App\Http\Resources\ProductResource;
 use App\Models\Category;
 use App\Models\Product;
 use App\Services\ApiResponse;
@@ -48,30 +49,33 @@ class MainController extends Controller
     {
         // Busca os produtos carregando apenas os campos necessários
         // O campo category_id é obrigatório para que o Eloquent consiga resolver a relação
-        $products = Product::with('category:id,name,description')
-            ->select('name', 'description', 'category_id')
-            ->get()
-            ->map(function ($product) {
+        // $products = Product::with('category:id,name,description')
+        //     ->select('name', 'description', 'category_id')
+        //     ->get()
+        //     ->map(function ($product) {
 
-                // Oculta category_id apenas na resposta
-                // $product->makeHidden('category_id');
-    
-                return [
-                    'name' => $product->name,
-                    'description' => $product->description,
-                    'category' => $product->category
-                        ? [
-                            'id' => $product->category->id,
-                            'name' => ucfirst($product->category->name),
-                            'description' => $product->category->description,
-                        ]
-                        : null,
-                ];
-            });
+        //         // Oculta category_id apenas na resposta
+        //         // $product->makeHidden('category_id');
 
+        //         return [
+        //             'name' => $product->name,
+        //             'description' => $product->description,
+        //             'category' => $product->category
+        //                 ? [
+        //                     'id' => $product->category->id,
+        //                     'name' => ucfirst($product->category->name),
+        //                     'description' => $product->category->description,
+        //                 ]
+        //                 : null,
+        //         ];
+        //     });
+
+        // API RESOURCE
+        $products = Product::with('category')->get();
         return ApiResponse::success([
-            'products' => $products,
-            'totalProducts' => $products->count(),
+            // 'products' => $products->toResourceCollection(ProductResource::class),
+            'products' => ProductResource::collection($products),
+            'totalProducts' => Product::count(),
         ]);
     }
 }
