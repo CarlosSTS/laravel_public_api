@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\CategoryResource;
 use App\Models\Category;
 use App\Models\Product;
 use App\Services\ApiResponse;
@@ -27,38 +28,50 @@ class MainController extends Controller
         // Trás todos os dados e retorna em formato JSON
         // $categories = Category::all();
 
-        $categories = Category::all(['id', 'name', 'description']);
+        // $categories = Category::all(['id', 'name', 'description']);
 
+        // return ApiResponse::success([
+        //     'categories' => $categories,
+        //     'totalCategories' => $categories->count()
+        // ]);
+
+        // API RESOURCE
+        $categories = Category::all();
         return ApiResponse::success([
-            'categories' => $categories,
+            // 'categories' => CategoryResource::collection($categories),
+            'categories' => $categories->toResourceCollection(CategoryResource::class),
             'totalCategories' => $categories->count()
         ]);
     }
 
     public function listProducts()
     {
-        // Trás todos os dados dos produtos e inclui o nome da categoria relacionada, retornando em formato JSON
-        // Não consegue remover o category_id da resposta, mesmo usando select, pois a relação exige esse campo para funcionar
-        // use o makeHidden para ocultar o campo category_id da resposta
-        $products = Product::with('category:id,name,description')->get(['name', 'description', 'category_id']);
+        // Busca os produtos carregando apenas os campos necessários
+        // O campo category_id é obrigatório para que o Eloquent consiga resolver a relação
+        $products = Product::with('category:id,name,description')
+            ->select('name', 'description', 'category_id')
+            ->get()
+            ->map(function ($product) {
 
-        // Caso necessario transformar o nomes que vem da relação para ficar mais claro na resposta,
-        // pode usar o transform para isso
-        $products->transform(function ($product) {
-            return [
-                'name' => $product->name,
-                'description' => $product->description,
-                'category' => $product->category ? [
-                    'id' => $product->category->id,
-                    'name' => ucfirst($product->category->name),
-                    'description' => $product->category->description
-                ] : null
-            ];
-        });
+                // Oculta category_id apenas na resposta
+                // $product->makeHidden('category_id');
+    
+                return [
+                    'name' => $product->name,
+                    'description' => $product->description,
+                    'category' => $product->category
+                        ? [
+                            'id' => $product->category->id,
+                            'name' => ucfirst($product->category->name),
+                            'description' => $product->category->description,
+                        ]
+                        : null,
+                ];
+            });
 
         return ApiResponse::success([
             'products' => $products,
-            'totalProducts' => $products->count()
+            'totalProducts' => $products->count(),
         ]);
     }
 }
