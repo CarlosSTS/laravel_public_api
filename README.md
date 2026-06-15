@@ -532,6 +532,6 @@ Para mudanças nos arquivos de config/cors execute:
 php artisan config:clear
 ```
 
-Isso irá limpar qualquer cache de exista na aplicação
+Isso irá limpar qualquer cache que exista na aplicação
 
 ---
