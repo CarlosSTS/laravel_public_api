@@ -4,8 +4,10 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
 use App\Http\Resources\CategoryResource;
+use App\Http\Resources\MovementResource;
 use App\Http\Resources\ProductResource;
 use App\Models\Category;
+use App\Models\Movement;
 use App\Models\Product;
 use App\Services\ApiResponse;
 use Illuminate\Http\Request;
@@ -76,6 +78,21 @@ class MainController extends Controller
             // 'products' => $products->toResourceCollection(ProductResource::class),
             'products' => ProductResource::collection($products),
             'totalProducts' => Product::count(),
+        ]);
+    }
+
+    public function listMovements()
+    {
+        // Carrega antecipadamente as relações product e category
+        // para evitar consultas extras ao acessar os dados (N+1 Queries)
+        $movements = Movement::with('product.category')->get();
+
+        // for testing with empty collections
+        // $movements = collect();
+
+        return ApiResponse::success([
+            'movements' => MovementResource::collection($movements),
+            'totalMovements' => $movements->count(),
         ]);
     }
 }

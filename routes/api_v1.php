@@ -11,3 +11,6 @@ Route::get('/categories', [MainController::class, 'listCategories']);
 
 // List of products
 Route::get('/products', [MainController::class, 'listProducts']);
+
+// List of movements
+Route::get('/movements', [MainController::class, 'listMovements']);
