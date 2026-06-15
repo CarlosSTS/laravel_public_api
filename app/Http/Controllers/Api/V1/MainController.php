@@ -107,4 +107,16 @@ class MainController extends Controller
             'category' => new CategoryResource($category)
         ]);
     }
+
+    public function getProduct($id)
+    {
+        $product = Product::with('category')->find($id);
+        if (!$product) {
+            return ApiResponse::error("Product with ID {$id} not found.", 404);
+        }
+
+        return ApiResponse::success([
+            'product' => new ProductResource($product)
+        ]);
+    }
 }

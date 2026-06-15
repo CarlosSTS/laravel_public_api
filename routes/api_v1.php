@@ -17,3 +17,6 @@ Route::get('/movements', [MainController::class, 'listMovements']);
 
 // Get category by ID
 Route::get('categories/{id}', [MainController::class, 'getCategory']);
+
+// Get product by ID
+Route::get('products/{id}', [MainController::class, 'getProduct']);
