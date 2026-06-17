@@ -119,4 +119,20 @@ class MainController extends Controller
             'product' => new ProductResource($product)
         ]);
     }
+
+    public function getProductsByCategory($id)
+    {
+        $category = Category::find($id);
+        if (!$category) {
+            return ApiResponse::error("Category with ID {$id} not found.", 404);
+        }
+
+        $products = Product::where('category_id', $id)->get();
+
+        return ApiResponse::success([
+            'category' => new CategoryResource($category),
+            'products' => ProductResource::collection($products),
+            'totalProducts' => $products->count(),
+        ]);
+    }
 }
