@@ -127,12 +127,31 @@ class MainController extends Controller
             return ApiResponse::error("Category with ID {$id} not found.", 404);
         }
 
-        $products = Product::where('category_id', $id)->get();
+        $products = Product::where('category_id', $id)
+            ->get()
+            ->toResourceCollection(ProductResource::class)
+            ->resolve();
+        // resolve() é necessário para transformar a coleção de recursos em um array simples,
+        // caso contrário, o Laravel tentará serializar os recursos como objetos JSON,
+        // o que pode resultar em uma estrutura de resposta mais complexa do que o esperado.
+
+        // array_map é usado para remover a chave 'category' de cada produto, pois já estamos retornando a categoria separadamente.
+        $products = array_map(function ($product) {
+            unset($product['category']); // Remove a chave 'category' do produto e vira um array simples e puro
+            return $product;
+        }, $products);
 
         return ApiResponse::success([
             'category' => new CategoryResource($category),
-            'products' => ProductResource::collection($products),
-            'totalProducts' => $products->count(),
+            'products' => $products,
+            'totalProducts' => count($products),
         ]);
+
+
+        // return ApiResponse::success([
+        //     'category' => new CategoryResource($category),
+        //     'products' => ProductResource::collection($products),
+        //     'totalProducts' => $products->count(),
+        // ]);
     }
 }
