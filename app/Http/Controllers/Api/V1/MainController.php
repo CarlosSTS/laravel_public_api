@@ -234,7 +234,7 @@ class MainController extends Controller
 
         // Validate the request data
         $validatedData = $request->validate([
-            'name' => 'required|string|max:255|unique:categories,name,' . $id,
+            'name' => 'string|max:255|unique:categories,name,' . $id,
             'description' => 'nullable|string',
         ]);
 
@@ -256,9 +256,9 @@ class MainController extends Controller
 
         // Validate the request data
         $validatedData = $request->validate([
-            'name' => 'sometimes|required|string|max:255|unique:products,name,' . $id,
+            'name' => 'string|max:255|unique:products,name,' . $id,
             'description' => 'nullable|string',
-            'category_id' => 'sometimes|required|exists:categories,id',
+            'category_id' => 'exists:categories,id',
         ]);
 
         // Update the product
@@ -279,9 +279,9 @@ class MainController extends Controller
 
         // Validate the request data
         $validatedData = $request->validate([
-            'product_id' => 'sometimes|required|exists:products,id',
-            'quantity' => 'sometimes|required|integer|min:1',
-            'movement_type' => 'sometimes|required|in:in,out', // Assuming movement_type can be either 'in' or 'out'
+            'product_id' => 'integer|exists:products,id',
+            'quantity' => 'integer|min:1',
+            'movement_type' => 'in:in,out', // Assuming movement_type can be either 'in' or 'out'
         ]);
 
         // Update the movement
