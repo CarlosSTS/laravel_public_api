@@ -28,71 +28,47 @@ class MainController extends Controller
 
     public function listCategories()
     {
-        // Trás todos os dados e retorna em formato JSON
-        // $categories = Category::all();
+        $perPage = request()->query('per_page', 15); // Default to 15 if not provided
+        $categories = Category::paginate($perPage);
 
-        // $categories = Category::all(['id', 'name', 'description']);
-
-        // return ApiResponse::success([
-        //     'categories' => $categories,
-        //     'totalCategories' => $categories->count()
-        // ]);
-
-        // API RESOURCE
-        $categories = Category::all();
         return ApiResponse::success([
-            // 'categories' => CategoryResource::collection($categories),
-            'categories' => $categories->toResourceCollection(CategoryResource::class),
-            'totalCategories' => $categories->count()
+            'categories' => CategoryResource::collection($categories),
+            'pagination' => [
+                'currentPage' => $categories->currentPage(),
+                'lastPage' => $categories->lastPage(),
+                'perPage' => $categories->perPage(),
+                'total' => $categories->total(),
+            ],
         ]);
     }
 
     public function listProducts()
     {
-        // Busca os produtos carregando apenas os campos necessários
-        // O campo category_id é obrigatório para que o Eloquent consiga resolver a relação
-        // $products = Product::with('category:id,name,description')
-        //     ->select('name', 'description', 'category_id')
-        //     ->get()
-        //     ->map(function ($product) {
-
-        //         // Oculta category_id apenas na resposta
-        //         // $product->makeHidden('category_id');
-
-        //         return [
-        //             'name' => $product->name,
-        //             'description' => $product->description,
-        //             'category' => $product->category
-        //                 ? [
-        //                     'id' => $product->category->id,
-        //                     'name' => ucfirst($product->category->name),
-        //                     'description' => $product->category->description,
-        //                 ]
-        //                 : null,
-        //         ];
-        //     });
-
-        // API RESOURCE
-        $products = Product::with('category')->get();
+        $perPage = request()->query('per_page', 15); // Default to 15 if not provided
+        $products = Product::with('category')->paginate($perPage);
         return ApiResponse::success([
-            // 'products' => $products->toResourceCollection(ProductResource::class),
             'products' => ProductResource::collection($products),
-            'totalProducts' => Product::count(),
+            'pagination' => [
+                'currentPage' => $products->currentPage(),
+                'lastPage' => $products->lastPage(),
+                'perPage' => $products->perPage(),
+                'total' => $products->total(),
+            ],
         ]);
     }
 
     public function listMovements()
     {
-        // Carrega antecipadamente as relações product e category
-        // para evitar consultas extras ao acessar os dados (N+1 Queries)
-        $movements = Movement::with('product.category')->get();
-
-        // for testing with empty collections
-        // $movements = collect();
-
+        $perPage = request()->query('per_page', 15); // Default to 15 if not provided
+        $movements = Movement::with(['product', 'category'])->paginate($perPage);
         return ApiResponse::success([
             'movements' => MovementResource::collection($movements),
-            'totalMovements' => $movements->count(),
+            'pagination' => [
+                'currentPage' => $movements->currentPage(),
+                'lastPage' => $movements->lastPage(),
+                'perPage' => $movements->perPage(),
+                'total' => $movements->total(),
+            ],
         ]);
     }
 
