@@ -62,11 +62,21 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (ValidationException $e, Request $request) {
             if ($request->is('api/*')) {
                 return ApiResponse::error(
-                    'Validation failed',
-                    422,
-                    $e->errors()
+                    code: 422,
+                    errors: $e->errors()
                 );
             }
+        });
+
+        // exception for everything else
+        $exceptions->render(function (\Throwable $e, Request $request) {
+            if ($request->is('api/*')) {
+                return ApiResponse::error(
+                    message: 'An unexpected error occurred. Please try again later.',
+                    code: 500,
+                    errors: [$e->getMessage()]
+                );
+            };
         });
 
     })->create();
