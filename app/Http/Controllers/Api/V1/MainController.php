@@ -302,7 +302,7 @@ class MainController extends Controller
 
         $category->delete();
 
-        return ApiResponse::success(null, "Category deleted successfully.");
+        return ApiResponse::success([], "Category deleted successfully.");
     }
 
     public function deleteProduct($id)
@@ -314,7 +314,7 @@ class MainController extends Controller
 
         $product->delete();
 
-        return ApiResponse::success(null, "Product deleted successfully.");
+        return ApiResponse::success([], "Product deleted successfully.");
     }
 
     public function deleteMovement($id)
