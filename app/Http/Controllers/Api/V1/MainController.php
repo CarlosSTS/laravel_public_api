@@ -205,4 +205,23 @@ class MainController extends Controller
             201
         );
     }
+
+    public function createMovement(Request $request)
+    {
+        // Validate the request data
+        $validatedData = $request->validate([
+            'product_id' => 'required|exists:products,id',
+            'quantity' => 'required|integer|min:1',
+            'movement_type' => 'required|in:in,out', // Assuming movement_type can be either 'in' or 'out'
+        ]);
+
+        // Create a new movement
+        $movement = Movement::create($validatedData);
+
+        return ApiResponse::success(
+            new MovementResource($movement),
+            "Movement created successfully.",
+            201
+        );
+    }
 }

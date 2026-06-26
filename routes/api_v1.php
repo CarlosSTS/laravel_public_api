@@ -29,3 +29,6 @@ Route::post('/categories/create', [MainController::class, 'createCategory']);
 
 // Create Product
 Route::post('/products/create', [MainController::class, 'createProduct']);
+
+// Create Movement
+Route::post('/movements/create', [MainController::class, 'createMovement']);
