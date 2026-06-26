@@ -224,4 +224,72 @@ class MainController extends Controller
             201
         );
     }
+
+    public function updateCategory(Request $request, $id)
+    {
+        $category = Category::find($id);
+        if (!$category) {
+            return ApiResponse::error("Category with ID {$id} not found.", 404);
+        }
+
+        // Validate the request data
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255|unique:categories,name,' . $id,
+            'description' => 'nullable|string',
+        ]);
+
+        // Update the category
+        $category->update($validatedData);
+
+        return ApiResponse::success(
+            new CategoryResource($category),
+            "Category updated successfully."
+        );
+    }
+
+    public function updateProduct(Request $request, $id)
+    {
+        $product = Product::find($id);
+        if (!$product) {
+            return ApiResponse::error("Product with ID {$id} not found.", 404);
+        }
+
+        // Validate the request data
+        $validatedData = $request->validate([
+            'name' => 'sometimes|required|string|max:255|unique:products,name,' . $id,
+            'description' => 'nullable|string',
+            'category_id' => 'sometimes|required|exists:categories,id',
+        ]);
+
+        // Update the product
+        $product->update($validatedData);
+
+        return ApiResponse::success(
+            new ProductResource($product),
+            "Product updated successfully."
+        );
+    }
+
+    public function updateMovement(Request $request, $id)
+    {
+        $movement = Movement::find($id);
+        if (!$movement) {
+            return ApiResponse::error("Movement with ID {$id} not found.", 404);
+        }
+
+        // Validate the request data
+        $validatedData = $request->validate([
+            'product_id' => 'sometimes|required|exists:products,id',
+            'quantity' => 'sometimes|required|integer|min:1',
+            'movement_type' => 'sometimes|required|in:in,out', // Assuming movement_type can be either 'in' or 'out'
+        ]);
+
+        // Update the movement
+        $movement->update($validatedData);
+
+        return ApiResponse::success(
+            new MovementResource($movement),
+            "Movement updated successfully."
+        );
+    }
 }

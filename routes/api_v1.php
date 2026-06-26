@@ -32,3 +32,12 @@ Route::post('/products/create', [MainController::class, 'createProduct']);
 
 // Create Movement
 Route::post('/movements/create', [MainController::class, 'createMovement']);
+
+// Update Category
+Route::put('/categories/{id}/update', [MainController::class, 'updateCategory']);
+
+// Update Product
+Route::put('/products/{id}/update', [MainController::class, 'updateProduct']);
+
+// Update Movement
+Route::put('/movements/{id}/update', [MainController::class, 'updateMovement']);
