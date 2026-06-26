@@ -130,4 +130,34 @@ class MainController extends Controller
         //     'totalProducts' => $products->count(),
         // ]);
     }
+
+    public function listMovementsOrdered($field, $direction)
+    {
+        // Validate the field and direction
+        $validFields = ['id', 'product_id', 'quantity', 'movement_type', 'created_at'];
+        $validDirections = ['asc', 'desc'];
+
+        if (!in_array($field, $validFields)) {
+            return ApiResponse::error("Invalid field: {$field}. Valid fields are: " . implode(', ', $validFields), 400);
+        }
+
+        if (!in_array($direction, $validDirections)) {
+            return ApiResponse::error("Invalid direction: {$direction}. Valid directions are: " . implode(', ', $validDirections), 400);
+        }
+
+        $perPage = request()->query('per_page', 15); // Default to 15 if not provided
+        $movements = Movement::with('product.category')
+            ->orderBy($field, $direction)
+            ->paginate($perPage);
+
+        return ApiResponse::success([
+            'movements' => MovementResource::collection($movements),
+            'pagination' => [
+                'currentPage' => $movements->currentPage(),
+                'lastPage' => $movements->lastPage(),
+                'perPage' => $movements->perPage(),
+                'total' => $movements->total(),
+            ],
+        ]);
+    }
 }

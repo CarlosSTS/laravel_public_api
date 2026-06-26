@@ -20,3 +20,6 @@ Route::get('products/{id}', [MainController::class, 'getProduct']);
 
 // Get all products in a category
 Route::get('categories/{id}/products', [MainController::class, 'getProductsByCategory']);
+
+# Ordered movements by field and direction
+Route::get('movements/ordered/{field}/{direction}', [MainController::class, 'listMovementsOrdered']);
