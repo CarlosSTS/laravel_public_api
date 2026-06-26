@@ -60,7 +60,7 @@ class MainController extends Controller
     public function listMovements()
     {
         $perPage = request()->query('per_page', 15); // Default to 15 if not provided
-        $movements = Movement::with(['product', 'category'])->paginate($perPage);
+        $movements = Movement::with('product.category')->paginate($perPage);
         return ApiResponse::success([
             'movements' => MovementResource::collection($movements),
             'pagination' => [
