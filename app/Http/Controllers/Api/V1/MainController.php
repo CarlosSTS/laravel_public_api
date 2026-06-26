@@ -161,7 +161,7 @@ class MainController extends Controller
         ]);
     }
 
-    public function addCategory(Request $request)
+    public function createCategory(Request $request)
     {
         // Validate the request data
         $validatedData = $request->validate([
@@ -183,6 +183,25 @@ class MainController extends Controller
         return ApiResponse::success(
             new CategoryResource($category),
             "Category created successfully.",
+            201
+        );
+    }
+
+    public function createProduct(Request $request)
+    {
+        // Validate the request data
+        $validatedData = $request->validate([
+            'name' => 'required|string|max:255|unique:products,name',
+            'description' => 'nullable|string',
+            'category_id' => 'required|exists:categories,id',
+        ]);
+
+        // Create a new product
+        $product = Product::create($validatedData);
+
+        return ApiResponse::success(
+            new ProductResource($product),
+            "Product created successfully.",
             201
         );
     }

@@ -6,6 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Product extends Model
 {
+    protected $fillable = [
+        'name',
+        'description',
+        'category_id',
+    ];
     public function category()
     {
         // Um produto pertence a uma categoria (N-1)

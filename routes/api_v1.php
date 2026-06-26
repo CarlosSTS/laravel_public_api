@@ -24,5 +24,8 @@ Route::get('/categories/{id}/products', [MainController::class, 'getProductsByCa
 // Ordered movements by field and direction
 Route::get('/movements/ordered/{field}/{direction}', [MainController::class, 'listMovementsOrdered']);
 
-// Add Category
-Route::post('/categories/create', [MainController::class, 'addCategory']);
+// Create Category
+Route::post('/categories/create', [MainController::class, 'createCategory']);
+
+// Create Product
+Route::post('/products/create', [MainController::class, 'createProduct']);
