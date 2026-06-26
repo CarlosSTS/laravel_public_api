@@ -180,9 +180,10 @@ class MainController extends Controller
         // Create a new category
         $category = Category::create($validatedData);
 
-        return ApiResponse::success([
-            'message' => 'Category created successfully.',
-            'category' => new CategoryResource($category),
-        ], 201);
+        return ApiResponse::success(
+            new CategoryResource($category),
+            "Category created successfully.",
+            201
+        );
     }
 }

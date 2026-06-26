@@ -9,7 +9,7 @@ use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Middleware\ThrottleRequests;
-use Illuminate\Support\Facades\Route;
+use Illuminate\Validation\ValidationException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -23,7 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
             // Route::middleware('api')
             // ->prefix('api/v1')
             // ->group(base_path('routes/api_v1.php'));
-
+        
             //  routes for version 2 of the API
             // Route::middleware('api')
             //     ->prefix('api/v2')
@@ -54,6 +54,19 @@ return Application::configure(basePath: dirname(__DIR__))
         // Custom exception for rate limit exceeded
         $exceptions->render(function (ThrottleRequestsException $e, Request $request) {
             return ApiResponse::error('Too many requests. Please try again later.', 429);
-
         });
+
+        // Capture validation exceptions and return a structured JSON response
+        // If a ValidationException is thrown, this will catch it and return a JSON response with the validation errors.
+    
+        $exceptions->render(function (ValidationException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return ApiResponse::error(
+                    'Validation failed',
+                    422,
+                    $e->errors()
+                );
+            }
+        });
+
     })->create();
