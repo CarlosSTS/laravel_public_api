@@ -292,4 +292,40 @@ class MainController extends Controller
             "Movement updated successfully."
         );
     }
+
+    public function deleteCategory($id)
+    {
+        $category = Category::find($id);
+        if (!$category) {
+            return ApiResponse::error("Category with ID {$id} not found.", 404);
+        }
+
+        $category->delete();
+
+        return ApiResponse::success(null, "Category deleted successfully.");
+    }
+
+    public function deleteProduct($id)
+    {
+        $product = Product::find($id);
+        if (!$product) {
+            return ApiResponse::error("Product with ID {$id} not found.", 404);
+        }
+
+        $product->delete();
+
+        return ApiResponse::success(null, "Product deleted successfully.");
+    }
+
+    public function deleteMovement($id)
+    {
+        $movement = Movement::find($id);
+        if (!$movement) {
+            return ApiResponse::error("Movement with ID {$id} not found.", 404);
+        }
+
+        $movement->delete();
+
+        return ApiResponse::success([], "Movement deleted successfully.");
+    }
 }

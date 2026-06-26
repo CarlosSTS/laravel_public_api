@@ -41,3 +41,12 @@ Route::put('/products/{id}/update', [MainController::class, 'updateProduct']);
 
 // Update Movement
 Route::put('/movements/{id}/update', [MainController::class, 'updateMovement']);
+
+// Delete Category
+Route::delete('/categories/{id}/delete', [MainController::class, 'deleteCategory']);
+
+// Delete Product
+Route::delete('/products/{id}/delete', [MainController::class, 'deleteProduct']);
+
+// Delete Movement
+Route::delete('/movements/{id}/delete', [MainController::class, 'deleteMovement']);
