@@ -2,6 +2,45 @@
 
 Projeto desenvolvido com **Laravel** com foco educacional para demonstrar conceitos fundamentais utilizados na construção de APIs REST.
 
+# Rodar o projeto
+
+## Requisitos
+
+- PHP ^8.3
+- Composer
+
+## Passos
+
+```bash
+# 1. Clonar e acessar o projeto
+git clone https://github.com/CarlosSTS/laravel_public_api
+cd laravel_public_api
+
+# 2. Instalar dependências
+composer install
+
+# 3. Configurar variáveis de ambiente
+cp .env.example .env
+
+# 4. Gerar a APP_KEY
+php artisan key:generate
+
+# 5. Criar arquivo do banco SQLite (se for usar SQLite - padrão)
+touch database/database.sqlite
+
+# 6. Rodar as migrations (cria as tabelas)
+php artisan migrate
+
+# 7. Popular o banco com dados iniciais (seeders)
+php artisan db:seed
+
+# 8. Iniciar o servidor de desenvolvimento
+php artisan serve
+```
+
+> Edite o `.env` com as credenciais do seu banco e rode `php artisan migrate` e `php artisan db:seed`.
+
+
 ## 📚 Conteúdo
 
 - Migrations
