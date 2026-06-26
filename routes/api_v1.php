@@ -14,12 +14,15 @@ Route::get('/products', [MainController::class, 'listProducts']);
 Route::get('/movements', [MainController::class, 'listMovements']);
 
 // Get category by ID
-Route::get('categories/{id}', [MainController::class, 'getCategory']);
+Route::get('/categories/{id}', [MainController::class, 'getCategory']);
 // Get product by ID
-Route::get('products/{id}', [MainController::class, 'getProduct']);
+Route::get('/products/{id}', [MainController::class, 'getProduct']);
 
 // Get all products in a category
-Route::get('categories/{id}/products', [MainController::class, 'getProductsByCategory']);
+Route::get('/categories/{id}/products', [MainController::class, 'getProductsByCategory']);
 
-# Ordered movements by field and direction
-Route::get('movements/ordered/{field}/{direction}', [MainController::class, 'listMovementsOrdered']);
+// Ordered movements by field and direction
+Route::get('/movements/ordered/{field}/{direction}', [MainController::class, 'listMovementsOrdered']);
+
+// Add Category
+Route::post('/categories/create', [MainController::class, 'addCategory']);

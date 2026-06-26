@@ -160,4 +160,29 @@ class MainController extends Controller
             ],
         ]);
     }
+
+    public function addCategory(Request $request)
+    {
+        // Validate the request data
+        $validatedData = $request->validate([
+            // Ensure the name is required, a string, has a maximum length of 255 characters and is unique in the categories table
+            'name' => 'required|string|max:255|unique:categories,name',
+            'description' => 'nullable|string', // Description is optional and can be null, but if provided, it must be a string
+        ]);
+
+        // Verify if a category with the same name already exists
+        // This check is redundant due to the unique validation rule above, but it's kept here for demonstration purposes.
+
+        // if (Category::where('name', $validatedData['name'])->exists()) {
+        // return ApiResponse::error("A category with the name '{$validatedData['name']}' already exists.", 409);
+        // }
+
+        // Create a new category
+        $category = Category::create($validatedData);
+
+        return ApiResponse::success([
+            'message' => 'Category created successfully.',
+            'category' => new CategoryResource($category),
+        ], 201);
+    }
 }
