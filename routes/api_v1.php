@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\MainController;
 use Illuminate\Support\Facades\Route;
 
@@ -50,3 +51,7 @@ Route::delete('/products/{id}/delete', [MainController::class, 'deleteProduct'])
 
 // Delete Movement
 Route::delete('/movements/{id}/delete', [MainController::class, 'deleteMovement']);
+
+
+// Authentication routes
+Route::post('/login', [AuthController::class, 'login']);
