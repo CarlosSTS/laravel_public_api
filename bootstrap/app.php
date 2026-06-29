@@ -69,8 +69,17 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         // exception for everything else
-        $exceptions->render(function (\Throwable $e, Request $request) {
+        $exceptions->render(function (\Exception $e, Request $request) {
             if ($request->is('api/*')) {
+
+                // Solve the sanctum login missing route
+                if ($e->getMessage() === 'Route [login] not defined.') {
+                    return ApiResponse::error(
+                        message: 'Invalid or missing authentication token. Please log in again.',
+                        code: 401,
+
+                    );
+                }
                 return ApiResponse::error(
                     message: 'An unexpected error occurred. Please try again later.',
                     code: 500,
