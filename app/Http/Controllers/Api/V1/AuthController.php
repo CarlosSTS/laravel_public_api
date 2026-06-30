@@ -35,7 +35,7 @@ class AuthController extends Controller
         }
 
         // Generate an access token for the authenticated user
-        $token = $user->createToken('auth_token')->plainTextToken;
+        $token = $user->createToken($user->name, ['read'])->plainTextToken;
 
         // Return the access token in the response
         return ApiResponse::success([

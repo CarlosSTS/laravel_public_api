@@ -10,6 +10,9 @@ use Illuminate\Http\Exceptions\ThrottleRequestsException;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Middleware\ThrottleRequests;
 use Illuminate\Validation\ValidationException;
+use Laravel\Sanctum\Http\Middleware\CheckAbilities;
+use Laravel\Sanctum\Http\Middleware\CheckForAnyAbility;
+use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -45,7 +48,14 @@ return Application::configure(basePath: dirname(__DIR__))
             ThrottleRequests::class . ':api', // use the 'api' rate limiter defined in the application's configuration
         ]);
 
+        // Sanctum ability middleware alias
+        $middleware->alias([
+            'abilities' => CheckAbilities::class,
+            'ability' => CheckForAnyAbility::class
+        ]);
+
     })
+
     ->withExceptions(function (Exceptions $exceptions): void {
         $exceptions->shouldRenderJsonWhen(
             fn(Request $request) => $request->is('api/*'),
@@ -56,9 +66,18 @@ return Application::configure(basePath: dirname(__DIR__))
             return ApiResponse::error('Too many requests. Please try again later.', 429);
         });
 
+        // Sanctum AccessDeniedHttpException
+        $exceptions->render(function (AccessDeniedHttpException $e, Request $request) {
+            if ($request->is('api/*')) {
+                return ApiResponse::error(
+                    message: $e->getMessage(),
+                    code: 403,
+                );
+            }
+        });
+
         // Capture validation exceptions and return a structured JSON response
         // If a ValidationException is thrown, this will catch it and return a JSON response with the validation errors.
-    
         $exceptions->render(function (ValidationException $e, Request $request) {
             if ($request->is('api/*')) {
                 return ApiResponse::error(
