@@ -34,8 +34,8 @@ class AuthController extends Controller
             return ApiResponse::error('Invalid credentials', 401);
         }
 
-        // Generate an access token for the authenticated user
-        $token = $user->createToken($user->name, ['read'])->plainTextToken;
+        // Generate an access token for the authenticated user with their abilities
+        $token = $user->createToken($user->name, json_decode($user->abilities))->plainTextToken;
 
         // Return the access token in the response
         return ApiResponse::success([

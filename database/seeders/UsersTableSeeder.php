@@ -18,18 +18,21 @@ class UsersTableSeeder extends Seeder
                 'email' => 'admin@example.com',
                 'email_verified_at' => now(),
                 'password' => bcrypt('password'),
+                'abilities' => json_encode(['read', 'write', 'delete']),
             ],
             [
                 'name' => 'Regular User',
                 'email' => 'user@example.com',
                 'email_verified_at' => now(),
                 'password' => bcrypt('password'),
+                'abilities' => json_encode(['read', 'write']),
             ],
             [
                 'name' => 'Guest User',
                 'email' => 'guest@example.com',
                 'email_verified_at' => now(),
                 'password' => bcrypt('password'),
+                'abilities' => json_encode(['read']),
             ]
         ];
 

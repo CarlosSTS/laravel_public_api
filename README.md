@@ -40,7 +40,6 @@ php artisan serve
 
 > Edite o `.env` com as credenciais do seu banco e rode `php artisan migrate` e `php artisan db:seed`.
 
-
 ## 📚 Conteúdo
 
 - Migrations
@@ -87,6 +86,12 @@ Migrations controlam alterações na estrutura do banco.
 
 ```bash
 php artisan make:migration create_products_table
+```
+
+### Adiconando um nova coluna em uma tabela existente
+
+```bash
+php artisan make:migration add_abilities_to_users_table --table=users
 ```
 
 Gerado em:
