@@ -45,4 +45,22 @@ class AuthController extends Controller
             'token' => $token,
         ]);
     }
+
+    public function logout(Request $request)
+    {
+        // Revoke the current access token
+        $request->user()->currentAccessToken()->delete();
+
+        // Revoke all access tokens for the user
+        // $request->user()->tokens()->delete();
+
+        // Remove the current access token from the user's tokens
+        // $request->user()->tokens()->where('id', $request->user()->currentAccessToken()->id)->delete();
+
+        // Return a success response
+        return ApiResponse::success(
+            [],
+            'Logged out successfully',
+        );
+    }
 }
