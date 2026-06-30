@@ -34,6 +34,9 @@ class AuthController extends Controller
             return ApiResponse::error('Invalid credentials', 401);
         }
 
+        // Generate an access token for the authenticated user with their abilities and set the expiration time to 5 minutes
+        // $token = $user->createToken($user->name, json_decode($user->abilities), now()->plus(minutes: 5))->plainTextToken;
+
         // Generate an access token for the authenticated user with their abilities
         $token = $user->createToken($user->name, json_decode($user->abilities))->plainTextToken;
 
